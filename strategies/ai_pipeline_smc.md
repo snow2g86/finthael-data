@@ -1,11 +1,11 @@
 # 전략: ai_pipeline_smc (Upbit KRW 현물, LONG 전용)
 
 ## 개요
-업비트 KRW 현물 단타. 매시간 24h 등락률 양수 top5 를 후보로 잡고, 5분봉 마감마다 단기 추세가
-상승인 종목만 SMC(Smart Money Concept) 관점으로 진입을 판단한다. 티어/승강 구조 없음.
+업비트 KRW 현물 단타. 매시간 2단계 선별(거래대금 top20 → 그 중 등락률 양수 top5)로 후보를 잡고,
+5분봉 마감마다 단기 추세가 상승인 종목만 SMC(Smart Money Concept) 관점으로 진입을 판단한다. 티어/승강 구조 없음.
 
 ## 파이프라인 (4 독립 서비스, DB로만 소통)
-1. scanner — 매시간 24h signed_change_rate 양수 top5 → scan_candidates
+1. scanner — 매시간 거래대금(24h) top20 → 그 중 등락률 양수 top5 → scan_candidates
 2. analyzer — 5분봉 마감마다 활성 후보 중 1h 추세 상승(EMA20 slope>0 & close>EMA20)만
    → SMC 피처 요약 → Gemma 4 31b 1차 long/skip 판단 → analysis_signals(pending)
 3. executor — pending 신호 → 사이징 → Sonnet 최종 컨펌 → 매수 → positions(open)
